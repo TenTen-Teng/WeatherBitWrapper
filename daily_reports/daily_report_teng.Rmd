@@ -1,0 +1,10 @@
+---
+title: "Daily Report - Mar10"
+output: html_document
+author: 'Teng'
+---
+
+## March 10, 2025
+1. Created `CONDUCT_OF_CODE.md` (commit: 024f646e9cd8f83464b734b9170f05c16bc2e67f)
+2. Created `CONTRIBUTING.md` (commit: 024f646e9cd8f83464b734b9170f05c16bc2e67f)
+3. Implemented `get_forecast_by_city` function. (commit: d7548be5f82d60dcd494a0609379af1764074baa)
