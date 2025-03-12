@@ -1,0 +1,15 @@
+---
+title: "Daily Report - Luna"
+author: "Luna Yu"
+date: "2025-03-10"
+output: html_document
+---
+
+## March 10, 2025
+1. Added `current_weather_functions.R` (commit: 5cd38a2a0aa58d86d1f72699baea0ed295efcae0)
+2. Added `test_current_weather.R` (commit: 5cd38a2a0aa58d86d1f72699baea0ed295efcae0)
+
+## March 11, 2025
+1. Refactored `current_weather_functions.R` (commit: )
+2. Improved error handling and validation for API calls (commit: )
+3. Integrated `connect_api_key()` and `save_csv()` (commit: )
