@@ -99,6 +99,7 @@ get_forecast_by_city <- function(
   return(dataframe)
 }
 
+
 # Get forecast by lat and lon.
 get_forecast_by_lat_lon <- function(
   lat, lon, save_dir = '', language = 'en', unit = 'M', day = 16
