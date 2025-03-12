@@ -1,5 +1,10 @@
 # WeatherBitWrapper
 
+## Introduction
+
+## Example
+Please see our [examples](./example/example.qmd)
+
 ## Questions
 1. Where to find a Weatherbit API key?
    Go to Weatherbit [API website](https://www.weatherbit.io/). Sign up and you will get your API key.
