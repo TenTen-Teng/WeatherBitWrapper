@@ -198,7 +198,7 @@ weather_alert_city <- function(city, state = NULL, country = NULL, save_dir = ''
 
 
 # Get alerts by postal code
-weather_alert_lat <- function(postal_code, country = NULL, save_dir = ''){
+weather_alert_postal <- function(postal_code, country = NULL, save_dir = ''){
   # Check API key.
   if (!connect_api_key()) {
     stop("Error: The WeatherBit API is empty! Please set up your WeatherBit
@@ -286,7 +286,7 @@ weather_alert_lat <- function(postal_code, country = NULL, save_dir = ''){
 
 
 # Get alerts by city id 
-weather_alert_lat <- function(city_id, save_dir = ''){
+weather_alert_id <- function(city_id, save_dir = ''){
   # Check API key.
   if (!connect_api_key()) {
     stop("Error: The WeatherBit API is empty! Please set up your WeatherBit
