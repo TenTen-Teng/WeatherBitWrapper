@@ -1,5 +1,5 @@
 # Load necessary functions
-source("C:/Users/Minju Yu/MasterofDataScience/DATA_534/WeatherBitWrapper/R/current_weather_functions.R")
+source("R/current_weather_functions.R")
 
 # Load API key from environment variable
 api_key <- Sys.getenv("WEATHERBIT_API_KEY")
