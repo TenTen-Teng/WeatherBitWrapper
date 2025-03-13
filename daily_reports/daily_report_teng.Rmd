@@ -4,6 +4,12 @@ output: html_document
 author: 'Teng'
 ---
 
+## March 11, 2025
+1. Implemented `get_forecast_by_city`, `get_forecast_by_lat_lon`, `get_forecast_by_postal_code`, `get_forecast_by_city_id` functions. (commit: c733bce27befdb4b04e237180bdbc051f75baac7)
+2. Provided a utils.R, including useful functions (commit: c4c734e0a7a36b66ae31e17f17d2ae2a64aa7b4a)
+3. Added an example.qmd for demo purpose. (commit: 0cce847a1c540ebe82c5b0d31a98c7da0c09aa19)
+4. Updated README.md (commit: ea1adad486aea50e11f24b6232e07a473cf76aa5)
+
 ## March 10, 2025
 1. Created `CONDUCT_OF_CODE.md` (commit: 024f646e9cd8f83464b734b9170f05c16bc2e67f)
 2. Created `CONTRIBUTING.md` (commit: 024f646e9cd8f83464b734b9170f05c16bc2e67f)
