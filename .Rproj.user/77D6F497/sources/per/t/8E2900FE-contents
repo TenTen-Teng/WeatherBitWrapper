@@ -1,0 +1,453 @@
+---
+title: "Data573 - Assignment1"
+author: "Teng Li (34291997)"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+    date: today
+editor: source
+---
+
+```{r}
+# Import libraries.
+
+library(mclust)
+library(RColorBrewer)
+library(ggplot2)
+```
+
+# Clustering
+
+## Banknotes
+
+```{r}
+data(banknote)
+class <- banknote$Status
+table(class)
+
+# Show data.
+head(banknote)
+
+# Exclude lable.
+X <- banknote[,-1]
+head(X)
+```
+
+#### Exercise 1 (EDA)
+
+**Explore your data and determine what is an appropriate distance measure to use. Justify your choice.**
+
+```{r}
+# Check structure of the dataset
+str(X)
+
+# Check variance.
+var(X)
+
+# Check covariance
+cov(X)
+```
+
+The Mahalanobis distance is an appropriate distance measure to use.
+
+-   First of all, all columns are numerical variables.
+-   From the covariance matrix, we can see that `cov(Diagonal, Bottom) = -1.037`, indicating `Diagonal` and `Bottom` have strong negative correlation. Additionally, `Bottom` has high variance (2.087) and `Diagonal` has relatively high variance (1.328). In
+
+#### Exercise 2 (hclust)
+
+**Use the chosen distance measure and apply hierarchical clustering with all three linkage types discussed in class. Provide the dendrograms for each.**
+
+```{r}
+# Mahalanobis distance.
+mah <- function(x, cx = NULL) {
+  if(is.null(cx)) cx <- cov(x)
+  out <- lapply(1:nrow(x), function(i) {
+    mahalanobis(x = x, 
+                center = do.call("c", x[i, ]),
+                cov = cx)
+  })
+  return(as.dist(do.call("rbind", out)))
+}
+
+# Apply Mahalanobis distance to scale data.
+scaled_X <- data.frame(
+  Length=scale(X$Length),
+  Left=scale(X$Left),
+  Right=scale(X$Right),
+  Bottom=scale(X$Bottom),
+  Top=scale(X$Top),
+  Diagonal=scale(X$Diagonal)
+  )
+mdist <- mah(scaled_X)
+```
+
+##### Simple linkage
+
+```{r}
+# Single linkage.
+single_hc <- hclust(d = mdist, method = "single")  
+plot(single_hc, labels=FALSE, main = "Single Linkaage")
+```
+
+##### Complete linkage
+
+```{r}
+# Complete linkage.
+complete_hc <- hclust(d = mdist, method = "complete")  
+plot(complete_hc, labels=FALSE, main = "Complete Linkaage")
+```
+
+##### Average linkage
+
+```{r}
+# Average linkage.
+average_hc <- hclust(d = mdist, method = "average")  
+plot(average_hc, labels=FALSE, main = "Average Linkaage")
+```
+
+#### Exercise 3 (Linkage)
+
+**Which linkage method would you choose, or do they all provide a similar outcome?**
+
+I would like to choose `complete linkage` because the dendrogram from complete linkage is more balanced compared to `single linkage,` which represents a chaining dendrogram, and `average linkage,` which represents a number of singleton clusters. In that case, `complete linkage` is a better option.
+
+#### Exercise 4 (Confusion Matrix)
+
+**Provide the confusion matrix for the resulting clusters produced from cutting your chosen dendrogram at an appropriate level. Provide the misclassification rate, referencing the true Status variable.**
+
+```{r}
+# Cut tree.
+
+complete_cls <- cutree(complete_hc, 3)
+
+# Confusion matrix
+table(banknote[,1], complete_cls)
+```
+
+If we combine cluster 2 and 3, and take cluster 1 as class `genuine` and cluster 2&2 as class `counterfeit`.
+
+```{r}
+# Misclassification rate.
+missclassification <- (65 + 19) / 200
+missclassification
+```
+
+#### Exercise 5 (kmeans)
+
+**Using a seed of 123, apply k-means clustering using k=2 on the scaled data. Provide a confusion matrix and the misclassification rate.**
+
+```{r}
+set.seed(123)
+
+banknote_kmeans <- kmeans(scale(X), 2)
+
+# Confusion matrix.
+table(banknote[,1], banknote_kmeans$cluster)
+```
+
+If we take cluster 1 as class `counterfeit` and cluster 2 as class `genuine`.
+
+```{r}
+# Misclassification rate.
+
+missclassification <- 8 / 200
+missclassification
+```
+
+#### Exercise 6 (Kmeans raw data)
+
+**Redo Exercise 5, this time, not scaling your data. Provide a confusion matrix and the misclassification rate. Provide some reasoning as to why this method performs better than the scaled data.**
+
+```{r}
+set.seed(123)
+
+banknote_kmeans_nonscale <- kmeans(X, 2)
+
+# Confusion matrix.
+table(banknote[,1], banknote_kmeans_nonscale$cluster)
+```
+
+If we take cluster 1 as class `counterfeit` and cluster 2 as class `genuine`.
+
+```{r}
+# Misclassification rate.
+
+missclassification <- 0 / 200
+missclassification
+```
+
+Reason: In the banknote dataset, features such as length, width, diagonal, and other numerical measurements are likely in narrow, well-separated numerical ranges. When using K-Means on non-scaled data, clustering can still work well if the raw feature scales inherently create natural separability.
+
+#### Exercise 7 (Intrepreting Results)
+
+**What does the generally strong performance of unsupervised methods in this data set suggest about its underlying structure?**
+
+Due to the nature of the banknote dataset, separating the data into distinct clusters is straightforward. The strong performance of unsupervised methods on this dataset suggests that when a dataset is naturally well-separated, unsupervised learning can be an effective approach, as it eliminates the need for labeled data, making data collection easier.
+
+Additionally, before applying scaling, it is important to first analyze the original data distribution to check for inherent patterns that could facilitate clustering. Scaling can sometimes obscure meaningful information, which may not be beneficial for unsupervised learning methods. Therefore, assessing the data structure beforehand helps ensure that valuable patterns are not lost.
+
+## Toy Data
+
+```{r}
+# clusts (true groups) and datmat (data)
+load("../data/lots.Rdata")
+
+class(clusts)
+class(datmat)
+
+clusts <- as.factor(clusts)
+str(clusts)
+```
+
+20 clusters
+
+### Exercise 8 (Scatterplot) {#ex8}
+
+**Generate a scatterplot where observations are colored according to their true group labels. Note: The default R color palette only supports six colors. You may use packages such as RColorBrewer to extend your colour palette to ensure sufficient color differentiation.**
+
+```{r}
+# Generate dataframe
+df <- data.frame(Data=datmat, Cluster=clusts)
+head(df)
+str(df)
+```
+
+```{r}
+#| label: fig-scatter-plot
+#| fig-cap: "Scatter Plot with 20 Clusters"
+
+
+ggplot(df, aes(x = Data.1, y = Data.2, color = Cluster)) +
+  geom_point() +
+  scale_color_manual(values = colorRampPalette(brewer.pal(12, "Paired"))(20)) +
+  labs(title = "Scatter Plot with 20 Clusters",
+       x = "X-axis",
+       y = "Y-axis",
+       color = "Cluster") +
+  theme_minimal()
+```
+
+### Exercise 9 (kmeans run 1)
+
+**Set a seed of 3201 and run k-means with k=20. Report the adjusted Rand index (from the mclust library; see ?adjustedRandIndex) comparing the clustering results to the true groups.**
+
+```{r}
+set.seed(3201)
+
+# Exclude label.
+X <- df[, -3]
+
+lots_kmeans3201 <- kmeans(scale(X), 20)
+
+# Calculate Adjusted RI.
+dri <- adjustedRandIndex(lots_kmeans3201$cluster, df[, 3])
+dri
+```
+
+### Exercise 10 (kmeans run 2)
+
+**Repeat Exercise 9 using a seed of 6201.**
+
+```{r}
+set.seed(6201)
+
+lots_kmeans6201 <- kmeans(scale(X), 20)
+
+# Calculate Adjusted RI.
+dri <- adjustedRandIndex(lots_kmeans6201$cluster, df[, 3])
+dri
+```
+
+### Exercise 11 (Multiple starts)
+
+**Repeat Exercise 9 this time using 1000 random starts (i.e. setting nstart=1000)**
+
+```{r}
+set.seed(3201)
+
+# Exclude label.
+X <- df[, -3]
+
+lots_kmeans3201 <- kmeans(scale(X), 20, nstart = 1000)
+
+# Calculate Adjusted RI.
+dri <- adjustedRandIndex(lots_kmeans3201$cluster, df[, 3])
+dri
+```
+
+### Exercise 12 (Multiple starts)
+
+**Repeat Exercise 10 this time using 1000 random starts (i.e. setting nstart=1000)**
+
+```{r}
+set.seed(6201)
+
+lots_kmeans6201 <- kmeans(scale(X), 20, nstart = 1000)
+
+# Calculate Adjusted RI.
+dri <- adjustedRandIndex(lots_kmeans6201$cluster, df[, 3])
+dri
+```
+
+### Exercise 13 (Report on Findings)
+
+**What interesting patterns or insights can you observe from the clustering results across all previous steps? Explain any unexpected findings and their possible implications.**
+
+Finding: 
+
+1. K-Means clustering performance varies with different seeds because the initial centroid positions influence the iterative refinement process. Different seeds lead to different starting centroids, which may result in different clustering outcomes.
+
+2.  Running K-Means multiple times with different initial centroids increases the likelihood of finding a better clustering solution by reducing the effect of poor initializations. This helps avoid local minima and enhances performance consistency.
+
+3.  With more trials, K-Means has a higher chance of initializing near the optimal centroids, leading to more stable clustering results across different seeds. This reduces the impact of randomness, making different seeds result in similar performance over many runs.
+
+### Exercise 14 (Best Mclust Model)
+
+**Which Mclust model do you think would be most apporpriate for this dataset? i.e. what is the most appropriate G and model name? (see ?mclustModelNames).**
+
+From @fig-scatter-plot, we can see clusters have similar volume, slightly different shape and orientation. So, the `EVV` model would be most apporpriate for this dataset and 20 is the most appropriate G.
+
+### Exercise 15 (Mclust fit)
+
+**Fit the Mclust model considering 19 to 21 components. Is the chosen model consistent with your guess from Exercise 14?**
+
+```{r}
+mc_model <- Mclust(scale(X), G=19:21)
+summary(mc_model, parameters = TRUE)
+```
+
+Result:
+
+According to summary, the `VEE` (ellipsoidal, equal orientation) model is the most apporpriate model and `19` is the best component number. These are not consistent with my guess in Exercise 14.
+
+### Exercise 16 (Mclust ari)
+
+**Regenerate a scatterplot of the data where observations are colored according to their group labels assigned by Mclust. Does Mclust out-perform k-means?**
+
+```{r}
+#| label: fig-mclust-plot
+#| fig-cap: "Scatter Plot with MCLUST Clusters"
+
+# Scatter plot from MUCLUST.
+
+ggplot(df, aes(x = Data.1, y = Data.2, color = factor(mc_model$classification))) +
+  geom_point() +
+  scale_color_manual(values = colorRampPalette(brewer.pal(12, "Paired"))(20)) +
+  labs(title = "Scatter Plot with MCLUST Clusters",
+       x = "X-axis",
+       y = "Y-axis",
+       color = "Cluster") +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-kmeans-plot
+#| fig-cap: "Scatter Plot with KMEANS Clusters"
+
+
+# Scatter plot from KMEANS
+
+ggplot(df, aes(x = Data.1, y = Data.2, color = factor(lots_kmeans6201$cluster))) +
+  geom_point() +
+  scale_color_manual(values = colorRampPalette(brewer.pal(12, "Paired"))(20)) +
+  labs(title = "Scatter Plot with KMEANS Clusters",
+       x = "X-axis",
+       y = "Y-axis",
+       color = "Cluster") +
+  theme_minimal()
+```
+
+According to scatterplots, @fig-mclust-plot and @fig-kmeans-plot, the `Mclust` model outperforms the `KMeans` model. The `Mclust` model can split all 20 clusters, but `KMeans` mixed a few clusters, leading to lower performance.
+
+# Principal Component Analysis
+
+### Exercise 17 (Load data)
+
+**Downlad and load the cars93.csv dataset from here; this is a cleaned version of the Cars93 dataset from the MASS library. Display data and ensure that the character vectors are converted to factors.**
+
+```{r}
+# Load data.
+data <- read.csv('../data/cars93.csv')
+head(data)
+
+print('Before converting...')
+str(data)
+
+# Convert character vectors to factors.
+for (i in colnames(data)){
+  if (is.character(data[[i]])){
+     data[[i]] <- as.factor(data[[i]])
+  }
+}
+
+print('After converting...')
+str(data)
+```
+
+### Exercise 18 (PCA)
+
+**Perform a principal components analysis on the numeric variables within the car93 data set. Provide a summary of the fitted model and a biplot. Ensure you scale the data.**
+
+```{r}
+numeric_data <- Filter(is.numeric, data)
+head(numeric_data)
+
+pcaout <- prcomp(numeric_data, scale. = TRUE)
+summary(pcaout)
+
+biplot(pcaout)
+```
+
+### Exercise 19 (PC1 loadings)
+
+```{r}
+loading <- pcaout$rotation
+head(loading)
+```
+
+**Interpret the loadings of the first principal component.**
+
+In the first principal component column from loading matrix, we can see that `EngineSize` contributed to PC1 most (0.29). The direction of loading values define directions in the orignal axex. For example, positive values such as `Price`, `EngineSize` and `Horsepower`, mean the variable increases when the principal component increases; While negative values such as `MPG.city`, `MPG.highway`, and `RPM`, mean the variable decreases when the principal component increases.
+
+### Exercise 20 (PC2 loadings)
+
+**Interpret the loadings of the second principal component.**
+
+In the second principal component column from loading matrix, we can see that `RPM` contributed to PC2 most (0.52). The direction of loading values define directions in the orignal axex. For example, positive values such as `Price`, `Horsepower`, and `RPM`, mean the variable increases when the principal component increases; While negative values such as `MPG.city`, `MPG.highway`, and `EngineSize`, mean the variable decreases when the principal component increases.
+
+### Exercise 21 (Choosing the Number of PCS)
+
+**How many principal components should be kept?**
+
+#### According to the Kaiser criterion?
+
+```{r}
+eigenvalues <- pcaout$sdev^2
+mean_eigenvalue <- mean(eigenvalues)
+
+selected_pcs <- which(eigenvalues >= mean_eigenvalue)
+
+# Print results
+cat("Eigenvalues:", eigenvalues, "\n")
+cat("Average eigenvalue:", mean_eigenvalue, "\n")
+cat("Number of PCs by Kaiser Criterion:", length(selected_pcs), "\n")
+print(selected_pcs)
+```
+According to the Kaiser Criterion, we should keep **2** principal components.
+
+#### If we wish to retain at least 90% of the variance in the data?
+
+According to the PCA model summary, we can see that the first 5 principal components explain 91% of the variance. So if we wish to retain at least 90% of the variance in the data, we should keep **5** principal components.
+
+#### According to the scree plot?
+
+```{r}
+#| label: fig-scree-plot
+#| fig-cap: "Scree Plot"
+
+
+plot(pcaout, type="lines")
+```
+
+According to @fig-scree-plot, **2** principal components should be kept where the rate of decrease in variance slows down significantly.

@@ -21,4 +21,24 @@ Please see our [examples](./example/example.qmd)
    
 ## Contributor
 <!-- readme: contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/TenTen-Teng">
+                    <img src="https://avatars.githubusercontent.com/u/18547241?v=4" width="100;" alt="TenTen-Teng"/>
+                    <br />
+                    <sub><b>TenTen-Teng</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Ieleniayu">
+                    <img src="https://avatars.githubusercontent.com/u/113123777?v=4" width="100;" alt="Ieleniayu"/>
+                    <br />
+                    <sub><b>Ieleniayu</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: contributors -end -->
