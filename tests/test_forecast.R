@@ -38,3 +38,13 @@ get_forecast_by_city(
 # Test get_forecast_by_lat_lon function.
 df <- get_forecast_by_lat_lon(lat=38.123, lon=-78.543, save_dir = './')
 df <- get_forecast_by_lat_lon(lat='38.123', lon=-78.543)
+
+
+# Test get_forecast_by_postal_code
+df <- get_forecast_by_postal_code(postal_code=27601, country='US', save_dir = './')
+df <- get_forecast_by_postal_code(postal_code='27601', country='US', save_dir = './')
+
+df <- get_forecast_by_city(city = 'Raleigh,NC', save_dir = './')
+df <- get_forecast_by_lat_lon(lat=38.123, lon=-78.543, save_dir = './')
+df <- get_forecast_by_postal_code(postal_code=27601, country='US', save_dir = './')
+df <- get_forecast_by_city_id('8953360', save_dir = './')
