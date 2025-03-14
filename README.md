@@ -32,6 +32,13 @@ Please see our [examples](./example/example.qmd)
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/yz031326">
+                    <img src="https://avatars.githubusercontent.com/u/180347465?v=4" width="100;" alt="yz031326"/>
+                    <br />
+                    <sub><b>Yuzhu Han</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/Ieleniayu">
                     <img src="https://avatars.githubusercontent.com/u/113123777?v=4" width="100;" alt="Ieleniayu"/>
                     <br />
