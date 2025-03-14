@@ -1,0 +1,41 @@
+---
+title: "DATA534 Daily Report"
+author: "Yuzhu Han"
+date: "2025-03-11"
+output: html_document
+---
+
+# Date: March 10, 2025
+
+## Work Summary
+- Implemented the **`weather_alert_city()`** and **`weather_alert_lat`** functions
+- Added **error handling** for API failures
+- Ensured location data is included even when no alerts exist
+- Debugged API URL formatting
+
+## Function & Decision
+- Used `httr` instead of `httrs` package for code consistency
+- Handle the optional **state** and **country** parameters based on the examples in the API documentation. 
+  - Need to check the API examples for optional parameters in other functions
+
+## Contribution
+- Work on the **alerts** endpoint of WeatherBit API
+  - Finish two test functions out of four planned functions
+
+## GitHub Commits
+- https://github.com/TenTen-Teng/WeatherBitWrapper/commit/6c31d038b75113696dbb87183ace330a9c9e135f
+
+
+
+# Date: March 11, 2025
+
+## Work Summary
+- Implemented the **`weather_alert_postal()`** and **`weather_alert_id()`** functions.
+- Applied the self-built functions from **Teng**.
+
+## Contribution
+- Work on the **alerts** endpoint of WeatherBit API
+  - Finish all four test functions
+
+## GitHub Commits
+- https://github.com/TenTen-Teng/WeatherBitWrapper/commit/dc2d5369a5994f6e99f9787593860297291d922b
